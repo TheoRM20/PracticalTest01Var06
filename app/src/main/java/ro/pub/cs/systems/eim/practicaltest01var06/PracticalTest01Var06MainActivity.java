@@ -1,5 +1,6 @@
 package ro.pub.cs.systems.eim.practicaltest01var06;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -7,9 +8,11 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class PracticalTest01Var06MainActivity extends AppCompatActivity implements TextWatcher {
 
+    private final static int SECONDARY_ACTIVITY_REQUEST_CODE = 1;
     private EditText upperEditText = null;
     private EditText urlEditText = null;
     private Button detailsButton = null;
@@ -57,6 +60,12 @@ public class PracticalTest01Var06MainActivity extends AppCompatActivity implemen
                         detailsButton.setText("Less details");
                     }
                     break;
+                case R.id.second_activity_button:
+                    Intent intent = new Intent(getApplicationContext(), PracticalTest01Var06SecondaryActivity.class);
+                    intent.putExtra("leftText", urlEditText.getText());
+                    intent.putExtra("rightText", upperEditText.getText());
+                    startActivityForResult(intent, SECONDARY_ACTIVITY_REQUEST_CODE);
+                    break;
             }
         }
     }
@@ -75,5 +84,45 @@ public class PracticalTest01Var06MainActivity extends AppCompatActivity implemen
 
         detailsButton.setOnClickListener(buttonClickListener);
         urlEditText.addTextChangedListener(this);
+
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey("upperText")) {
+                upperEditText.setText(savedInstanceState.getString("upperText"));
+                Toast.makeText(this, "Restarted with " + upperEditText.getText(), Toast.LENGTH_LONG).show();
+            } else {
+                upperEditText.setText("");
+            }
+            if (savedInstanceState.containsKey("urlText")) {
+                urlEditText.setText(savedInstanceState.getString("urlText"));
+                Toast.makeText(this, "Restarted with " + urlEditText.getText(), Toast.LENGTH_LONG).show();
+            } else {
+                urlEditText.setText("");
+            }
+        } else {
+            urlEditText.setText("");
+            upperEditText.setText("");
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putString("upperText", upperEditText.getText().toString());
+        savedInstanceState.putString("urlText", urlEditText.getText().toString());
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        if (savedInstanceState.containsKey("upperText")) {
+            upperEditText.setText(savedInstanceState.getString("upperText"));
+            Toast.makeText(this, "Restarted with " + upperEditText.getText(), Toast.LENGTH_LONG).show();
+        } else {
+            upperEditText.setText("");
+        }
+        if (savedInstanceState.containsKey("urlText")) {
+            urlEditText.setText(savedInstanceState.getString("urlText"));
+            Toast.makeText(this, "Restarted with " + urlEditText.getText(), Toast.LENGTH_LONG).show();
+        } else {
+            urlEditText.setText("");
+        }
     }
 }
